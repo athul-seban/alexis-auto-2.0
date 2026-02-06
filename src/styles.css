@@ -30,7 +30,7 @@
 body.light-mode {
   --bg-body: #f3f4f6;
   --bg-card: #ffffff;
-  --bg-glass: rgba(255, 255, 255, 0.95);
+  --bg-glass: rgba(255, 255, 255, 0.9);
   --text-main: #111827;
   --text-muted: #4b5563;
   --border-color: rgba(0, 0, 0, 0.1);
@@ -71,14 +71,15 @@ body.light-mode .border-white\/30 {
 
 body.light-mode .bg-white\/5, 
 body.light-mode .bg-white\/10 {
-    background-color: rgba(0,0,0, 0.05) !important;
+    background-color: #f8fafc !important; /* Slightly distinct gray for panels in light mode */
+    border: 1px solid var(--border-color) !important;
 }
 
 body.light-mode .bg-black\/40,
 body.light-mode .bg-black\/50,
 body.light-mode .bg-black\/80,
 body.light-mode .bg-black\/95 {
-    background-color: rgba(255, 255, 255, 0.9) !important;
+    background-color: #ffffff !important;
     color: var(--text-main) !important;
     border-color: var(--border-color) !important;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
