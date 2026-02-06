@@ -26,7 +26,7 @@
 body.light-mode {
   --bg-body: #f3f4f6;
   --bg-card: #ffffff;
-  --bg-glass: rgba(255, 255, 255, 0.85);
+  --bg-glass: rgba(255, 255, 255, 0.95);
   --text-main: #111827;
   --text-muted: #4b5563;
   --border-color: rgba(0, 0, 0, 0.1);
@@ -77,13 +77,14 @@ body.light-mode .bg-black\/95 {
     background-color: rgba(255, 255, 255, 0.9) !important;
     color: var(--text-main) !important;
     border-color: var(--border-color) !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
 }
 
 /* Glass Panel Adaptation */
 body.light-mode .glass-panel {
   background: var(--bg-glass) !important;
   border-color: var(--border-color) !important;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
 }
 
 /* Inputs in Light Mode */
@@ -95,12 +96,16 @@ body.light-mode select {
     border-color: #d1d5db !important;
 }
 
-/* Keep Red Accent visible */
+/* Red Identity Protection */
 .text-\[\#E30613\] {
     color: #E30613 !important;
 }
 .bg-\[\#E30613\] {
     background-color: #E30613 !important;
+}
+body.light-mode .hover\:bg-\[\#E30613\]:hover {
+    background-color: #E30613 !important;
+    color: white !important;
 }
 
 h1, h2, h3, .brand-font {

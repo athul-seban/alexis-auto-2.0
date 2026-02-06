@@ -1,10 +1,12 @@
 
 <h2 class="text-xl font-bold mb-6 border-b border-white/10 pb-4">System & User Management</h2>
 
-<!-- Theme Configuration -->
+<!-- System Configuration -->
 <div class="bg-white/5 p-6 rounded-xl mb-8 border border-white/10">
-   <h3 class="text-sm font-bold text-gray-400 uppercase mb-4">Appearance</h3>
-   <div class="flex items-center justify-between">
+   <h3 class="text-sm font-bold text-gray-400 uppercase mb-6">System Configuration</h3>
+   
+   <!-- Theme Toggle -->
+   <div class="flex items-center justify-between mb-8 pb-8 border-b border-white/5">
       <div>
         <p class="text-white font-bold text-sm">Interface Theme</p>
         <p class="text-xs text-gray-500">Toggle between the classic dark luxury look and the bright workspace mode.</p>
@@ -14,6 +16,35 @@
          <span class="text-xs font-bold uppercase text-white">{{ dataService.theme() }} Mode</span>
          <div class="w-4 h-4 rounded-full transition-colors duration-300" [class.bg-[#E30613]]="dataService.theme() === 'light'" [class.bg-gray-600]="dataService.theme() !== 'light'"></div>
       </button>
+   </div>
+
+   <!-- Demo Mode Toggle -->
+   <div class="flex items-center justify-between mb-6">
+      <div>
+        <p class="text-white font-bold text-sm">Demo / Offline Mode</p>
+        <p class="text-xs text-gray-500">Enable static data for demonstration purposes or when backend is unavailable.</p>
+      </div>
+      <button (click)="toggleDemoMode()" class="relative w-12 h-6 rounded-full transition-colors duration-300 focus:outline-none"
+         [class.bg-[#E30613]]="dataService.isDemoMode()"
+         [class.bg-gray-700]="!dataService.isDemoMode()">
+         <div class="absolute top-1 left-1 w-4 h-4 rounded-full bg-white transition-transform duration-300"
+           [class.translate-x-6]="dataService.isDemoMode()"></div>
+      </button>
+   </div>
+
+   <!-- Banner Configuration -->
+   <div>
+      <p class="text-white font-bold text-sm mb-2">Global Banner Message</p>
+      <div class="flex gap-4">
+         <input #bannerInput [value]="dataService.banner().reason" placeholder="Enter banner message..." class="flex-1 bg-black border border-white/20 rounded p-2 text-sm text-white">
+         <button (click)="updateBanner(bannerInput.value)" class="bg-[#E30613] text-white px-4 py-2 rounded text-xs font-bold uppercase hover:bg-red-700 transition-colors">Update Banner</button>
+      </div>
+      @if (dataService.banner().active) {
+         <div class="mt-2 flex items-center gap-2">
+            <span class="text-xs text-[#E30613] font-bold">● Active</span>
+            <button (click)="updateBanner('')" class="text-xs text-gray-500 hover:text-white underline">Clear/Disable Banner</button>
+         </div>
+      }
    </div>
 </div>
 
