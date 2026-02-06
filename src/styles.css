@@ -15,9 +15,9 @@
 }
 
 :root {
-  --bg-body: #050505;
-  --bg-card: #0f0f11;
-  --bg-glass: rgba(20, 20, 23, 0.6);
+  --bg-body: #000000;
+  --bg-card: #0a0a0a;
+  --bg-glass: rgba(10, 10, 10, 0.8);
   --text-main: #e5e5e5;
   --text-muted: #9ca3af;
   --border-color: rgba(255, 255, 255, 0.1);
