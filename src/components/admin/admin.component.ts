@@ -23,7 +23,7 @@ import { AdminUsersComponent } from './admin-users/admin-users.component';
     AdminUsersComponent
   ],
   templateUrl: './admin.component.html',
-  styleUrl: './admin.component.scss'
+  styleUrl: './admin.component.css'
 })
 export class AdminComponent {
   authService = inject(AuthService);

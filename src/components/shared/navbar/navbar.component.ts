@@ -7,7 +7,7 @@ import { DataService } from '../../../services/data.service';
   selector: 'app-navbar',
   imports: [CommonModule],
   templateUrl: './navbar.component.html',
-  styleUrl: './navbar.component.scss'
+  styleUrl: './navbar.component.css'
 })
 export class NavbarComponent {
   dataService = inject(DataService);
@@ -29,6 +29,10 @@ export class NavbarComponent {
       case 'About': return 'about';
       default: return 'home';
     }
+  }
+
+  toggleMobileMenu() {
+    this.mobileMenuOpen.update(v => !v);
   }
 
   onMobileNavigate(item: string) {

@@ -14,7 +14,7 @@ interface Message {
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './chatbot.component.html',
-  styleUrl: './chatbot.component.scss'
+  styleUrl: './chatbot.component.css'
 })
 export class ChatbotComponent {
   private geminiService = inject(GeminiService);

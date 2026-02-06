@@ -1,0 +1,46 @@
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #09090b;
+}
+::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #E30613;
+}
+
+body {
+  background-color: #050505;
+  color: #e5e5e5;
+  font-family: 'Inter', sans-serif;
+}
+
+h1, h2, h3, .brand-font {
+  font-family: 'Michroma', sans-serif;
+}
+
+.sub-brand-font {
+  font-family: 'Montserrat', sans-serif;
+}
+
+/* Premium Metallic Text Effect */
+.liquid-chrome-text {
+  background: linear-gradient(to bottom, #ffffff 20%, #a1a1aa 80%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
+  text-shadow: 0px 2px 4px rgba(0,0,0,0.3);
+}
+
+.glass-panel {
+  background: rgba(20, 20, 23, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}

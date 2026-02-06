@@ -8,7 +8,7 @@ import { AuthService } from '../../../services/auth.service';
   selector: 'app-admin-login',
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './admin-login.component.html',
-  styleUrl: './admin-login.component.scss'
+  styleUrl: './admin-login.component.css'
 })
 export class AdminLoginComponent {
   authService = inject(AuthService);
