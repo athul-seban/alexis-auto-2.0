@@ -1,4 +1,16 @@
 
+import sys
+import os
+
+# --- PATH FIX FOR DIRECT EXECUTION ---
+# This allows running `python backend/main.py` without "ImportError: attempted relative import..."
+if __name__ == "__main__" and __package__ is None:
+    file_path = os.path.abspath(__file__)
+    backend_dir = os.path.dirname(file_path)
+    root_dir = os.path.dirname(backend_dir)
+    sys.path.append(root_dir)
+    __package__ = "backend"
+
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -18,9 +30,6 @@ async def lifespan(app: FastAPI):
 app = FastAPI(title="Alexis Autos API", lifespan=lifespan)
 
 # --- CORS MIDDLEWARE ---
-# Using allow_origins=["*"] with allow_credentials=False is the most robust way 
-# to handle dynamic Codespace URLs where the origin domain changes.
-# The frontend does not use cookies for auth (uses Bearer token), so credentials are not needed.
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"], 
@@ -30,7 +39,7 @@ app.add_middleware(
     expose_headers=["*"]
 )
 
-# --- Global Exception Handler for debugging ---
+# --- Global Exception Handler ---
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
     print(f"Global Error: {exc}")
@@ -49,6 +58,5 @@ def read_root():
 
 if __name__ == "__main__":
     import uvicorn
-    # Initialize DB on main run as well just in case
     init_db(get_password_hash)
     uvicorn.run(app, host="0.0.0.0", port=8000)

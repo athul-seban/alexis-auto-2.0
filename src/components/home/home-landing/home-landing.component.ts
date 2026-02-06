@@ -1,10 +1,10 @@
 
 import { Component, output } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 
 @Component({
   selector: 'app-home-landing',
-  imports: [CommonModule],
+  imports: [CommonModule, NgOptimizedImage],
   templateUrl: './home-landing.component.html',
   styleUrl: './home-landing.component.scss'
 })

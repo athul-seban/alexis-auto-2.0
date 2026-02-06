@@ -6,7 +6,8 @@ import { DataService } from '../../../services/data.service';
 @Component({
   selector: 'app-navbar',
   imports: [CommonModule],
-  templateUrl: './navbar.component.html'
+  templateUrl: './navbar.component.html',
+  styleUrl: './navbar.component.scss'
 })
 export class NavbarComponent {
   dataService = inject(DataService);
