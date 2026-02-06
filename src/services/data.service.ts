@@ -1,7 +1,8 @@
 
 import { Injectable, signal, inject } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { catchError, firstValueFrom, Observable, of, tap } from 'rxjs';
+import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
+import { firstValueFrom, Observable, throwError } from 'rxjs';
+import { catchError, tap } from 'rxjs/operators';
 import { environment } from '../environments/environment';
 
 export interface Car {
@@ -103,23 +104,19 @@ export class DataService {
     }
 
     // 2. GitHub Codespaces / Gitpod Auto-Detection
-    // Replaces the frontend port suffix (usually -3000 or -4200) with the backend port -8000
+    // Matches patterns like: app-name-3000.app.github.dev
+    // We want to replace the port number (e.g. 3000 or 4200) with 8000
     if (hostname.includes('github.dev') || hostname.includes('gitpod.io') || hostname.includes('app.github.dev')) {
-      // Regex to find -3000, -4200, or similar port suffixes in the first part of the domain
       const newHostname = hostname.replace(/-[0-9]+(?=\.)/, '-8000');
-      
-      // If regex didn't change anything (maybe format is different), try simple replacement or keep as is
-      if (newHostname !== hostname) {
-        return `https://${newHostname}/api`;
-      }
+      return `https://${newHostname}/api`;
     }
 
-    // 3. Environment Variable Fallback (Production or Manual override)
+    // 3. Environment Variable Fallback
     if (environment.apiUrl && environment.apiUrl !== '') {
         return environment.apiUrl.endsWith('/api') ? environment.apiUrl : `${environment.apiUrl}/api`;
     }
     
-    // 4. Default Fallback (Same Origin or port 8000)
+    // 4. Default Fallback
     return `${window.location.protocol}//${window.location.hostname}:8000/api`;
   }
 
@@ -132,7 +129,6 @@ export class DataService {
   services = signal<ServiceItem[]>([]);
   bookings = signal<Booking[]>([]);
   
-  // Static locations
   locations = signal<Location[]>([
     { city: "Loughborough", type: "Main Service Centre", addressLine: "Unit C5, Cumberland Trading Estate" },
     { city: "Leicester", type: "Tyre Shop", addressLine: "142 Narborough Road" }
@@ -151,7 +147,6 @@ export class DataService {
     this.initializeData();
   }
 
-  // Configuration Methods
   setCustomApiUrl(url: string) {
     const cleanUrl = url.endsWith('/') ? url.slice(0, -1) : url;
     localStorage.setItem('alexis_api_url', cleanUrl);
@@ -178,18 +173,17 @@ export class DataService {
         this.loadSettings()
       ]);
       console.log('Sync complete.');
-    } catch (e) {
-      console.error('API Connection Failed. Please ensure backend is running or check API URL configuration.', e);
+    } catch (e: any) {
+      console.error('API Connection Failed.', e);
+      if (e.status === 0) {
+        console.warn('%c CRITICAL: CORS or Connection Error.', 'color: red; font-size: 16px; font-weight: bold;');
+        console.warn('If you are using GitHub Codespaces, ensure Port 8000 visibility is set to PUBLIC in the "PORTS" tab.');
+      }
     }
   }
 
-  // --- Helpers ---
-  
-  /**
-   * Generates headers for requests.
-   * IMPORTANT: Adds 'ngrok-skip-browser-warning' to bypass tunnel interstitial pages.
-   */
   private getOptions(auth: boolean = false) {
+    // These headers help with some proxy warnings (like Ngrok or sometimes Codespaces)
     let headers = new HttpHeaders({
       'ngrok-skip-browser-warning': 'true',
       'Bypass-Tunnel-Reminder': 'true'
@@ -204,8 +198,7 @@ export class DataService {
     return { headers };
   }
 
-  // --- API Loaders (Read Only - No Auth required usually, but we send headers to bypass tunnel) ---
-  
+  // --- API Loaders ---
   private loadCars() {
     return firstValueFrom(this.http.get<Car[]>(`${this.apiUrl}/cars`, this.getOptions(false)))
       .then(data => this.inventory.set(data));
@@ -215,7 +208,6 @@ export class DataService {
       .then(data => this.services.set(data));
   }
   public loadBookings() {
-    // Only works if authenticated
     return firstValueFrom(this.http.get<Booking[]>(`${this.apiUrl}/bookings`, this.getOptions(true)))
       .then(data => this.bookings.set(data))
       .catch(err => console.log('Cannot load bookings (unauthorized)'));
@@ -229,23 +221,23 @@ export class DataService {
       .then(data => this.tyreBrands.set(data));
   }
   private async loadSettings() {
-    const banner = await firstValueFrom(this.http.get<Banner>(`${this.apiUrl}/settings/banner`, this.getOptions(false)));
-    if (banner && Object.keys(banner).length > 0) this.banner.set(banner);
+    try {
+      const banner = await firstValueFrom(this.http.get<Banner>(`${this.apiUrl}/settings/banner`, this.getOptions(false)));
+      if (banner) this.banner.set(banner);
 
-    const info = await firstValueFrom(this.http.get<CompanyInfo>(`${this.apiUrl}/settings/companyInfo`, this.getOptions(false)));
-    if (info && Object.keys(info).length > 0) this.companyInfo.set(info);
+      const info = await firstValueFrom(this.http.get<CompanyInfo>(`${this.apiUrl}/settings/companyInfo`, this.getOptions(false)));
+      if (info) this.companyInfo.set(info);
+    } catch (e) { console.warn('Could not load settings'); }
   }
 
   // --- PUBLIC CRUD METHODS ---
-
-  // 1. SERVICES
-  addService(service: Omit<ServiceItem, 'id'>): Observable<ServiceItem> {
+  addService(service: Omit<ServiceItem, 'id'>) {
     return this.http.post<ServiceItem>(`${this.apiUrl}/services`, service, this.getOptions(true)).pipe(
       tap(newService => this.services.update(s => [...s, newService]))
     );
   }
 
-  updateService(id: number, data: Partial<ServiceItem>): Observable<ServiceItem> {
+  updateService(id: number, data: Partial<ServiceItem>) {
     const current = this.services().find(s => s.id === id);
     const payload = { ...current, ...data };
     return this.http.put<ServiceItem>(`${this.apiUrl}/services/${id}`, payload, this.getOptions(true)).pipe(
@@ -253,20 +245,19 @@ export class DataService {
     );
   }
 
-  removeService(id: number): Observable<any> {
+  removeService(id: number) {
     return this.http.delete(`${this.apiUrl}/services/${id}`, this.getOptions(true)).pipe(
       tap(() => this.services.update(s => s.filter(i => i.id !== id)))
     );
   }
 
-  // 2. CARS
-  addCar(car: Omit<Car, 'id'>): Observable<Car> {
+  addCar(car: Omit<Car, 'id'>) {
     return this.http.post<Car>(`${this.apiUrl}/cars`, car, this.getOptions(true)).pipe(
       tap(newCar => this.inventory.update(cars => [...cars, newCar]))
     );
   }
 
-  updateCar(id: number, car: Partial<Car>): Observable<Car> {
+  updateCar(id: number, car: Partial<Car>) {
     const current = this.inventory().find(c => c.id === id);
     const payload = { ...current, ...car };
     return this.http.put<Car>(`${this.apiUrl}/cars/${id}`, payload, this.getOptions(true)).pipe(
@@ -274,23 +265,17 @@ export class DataService {
     );
   }
 
-  removeCar(id: number): Observable<any> {
+  removeCar(id: number) {
     return this.http.delete(`${this.apiUrl}/cars/${id}`, this.getOptions(true)).pipe(
       tap(() => this.inventory.update(cars => cars.filter(c => c.id !== id)))
     );
   }
 
-  // 3. BOOKINGS
-  addBooking(booking: Omit<Booking, 'id' | 'status'>): Observable<Booking> {
-    // Public endpoint, use generic options
-    return this.http.post<Booking>(`${this.apiUrl}/bookings`, { ...booking, status: 'Pending' }, this.getOptions(false)).pipe(
-      tap(newBooking => {
-         // Optionally add to local state
-      })
-    );
+  addBooking(booking: Omit<Booking, 'id' | 'status'>) {
+    return this.http.post<Booking>(`${this.apiUrl}/bookings`, { ...booking, status: 'Pending' }, this.getOptions(false));
   }
 
-  updateBookingStatus(id: number, status: Booking['status']): Observable<any> {
+  updateBookingStatus(id: number, status: Booking['status']) {
     return this.http.put(`${this.apiUrl}/bookings/${id}/status`, { status }, this.getOptions(true)).pipe(
       tap(() => this.bookings.update(b => b.map(booking => 
         booking.id === id ? { ...booking, status } : booking
@@ -298,14 +283,13 @@ export class DataService {
     );
   }
 
-  // 4. TYRES
-  addTyreProduct(product: Omit<TyreProduct, 'id'>): Observable<TyreProduct> {
+  addTyreProduct(product: Omit<TyreProduct, 'id'>) {
     return this.http.post<TyreProduct>(`${this.apiUrl}/tyres`, product, this.getOptions(true)).pipe(
       tap(newTyre => this.tyreInventory.update(t => [...t, newTyre]))
     );
   }
 
-  updateTyreProduct(id: number, data: Partial<TyreProduct>): Observable<TyreProduct> {
+  updateTyreProduct(id: number, data: Partial<TyreProduct>) {
     const current = this.tyreInventory().find(t => t.id === id);
     const payload = { ...current, ...data };
     return this.http.put<TyreProduct>(`${this.apiUrl}/tyres/${id}`, payload, this.getOptions(true)).pipe(
@@ -313,7 +297,7 @@ export class DataService {
     );
   }
 
-  removeTyreProduct(id: number): Observable<any> {
+  removeTyreProduct(id: number) {
     return this.http.delete(`${this.apiUrl}/tyres/${id}`, this.getOptions(true)).pipe(
       tap(() => this.tyreInventory.update(t => t.filter(i => i.id !== id)))
     );
@@ -322,9 +306,7 @@ export class DataService {
   updateTyreStock(id: number, delta: number) {
     this.http.put(`${this.apiUrl}/tyres/${id}/stock`, { delta }, this.getOptions(true)).subscribe(() => {
        this.tyreInventory.update(tyres => tyres.map(t => {
-          if (t.id === id) {
-             return { ...t, quantity: Math.max(0, t.quantity + delta) };
-          }
+          if (t.id === id) return { ...t, quantity: Math.max(0, t.quantity + delta) };
           return t;
        }));
     });
@@ -333,8 +315,6 @@ export class DataService {
   searchTyres(vehicleQuery: string): TyreProduct[] {
     const query = vehicleQuery.toLowerCase();
     if (query.length < 2) return [];
-    
-    // Perform client-side filtering on the inventory
     return this.tyreInventory().filter(t => 
       t.brand.toLowerCase().includes(query) || 
       t.model.toLowerCase().includes(query) ||
@@ -343,7 +323,6 @@ export class DataService {
     );
   }
 
-  // 5. BRANDS
   addTyreBrand(name: string) {
     this.http.post<TyreBrand>(`${this.apiUrl}/brands`, { name }, this.getOptions(true)).subscribe(brand => {
        this.tyreBrands.update(b => [...b, brand]);
@@ -356,7 +335,6 @@ export class DataService {
     });
   }
 
-  // 6. SETTINGS (Banner & Company Info)
   updateBanner(active: boolean, reason: string) {
     const payload = { active, reason };
     this.http.post(`${this.apiUrl}/settings`, { key: 'banner', value: payload }, this.getOptions(true)).subscribe(() => {
@@ -372,17 +350,15 @@ export class DataService {
     });
   }
 
-  // 7. AUTH (API)
-  addUser(user: User): Observable<any> {
+  addUser(user: User) {
     return this.http.post(`${this.apiUrl}/users`, user, this.getOptions(true));
   }
 
-  changePassword(username: string, newPass: string): Observable<any> {
+  changePassword(username: string, newPass: string) {
     return this.http.put(`${this.apiUrl}/users/${username}/password`, { password: newPass }, this.getOptions(true));
   }
 
-  login(username: string, password: string): Observable<{ access_token: string, token_type: string, username: string }> {
-    // Login usually doesn't need auth header, but needs bypass header
+  login(username: string, password: string) {
     return this.http.post<{ access_token: string, token_type: string, username: string }>(`${this.apiUrl}/login`, { username, password }, this.getOptions(false));
   }
 }

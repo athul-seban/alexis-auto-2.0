@@ -23,13 +23,7 @@ import { AdminUsersComponent } from './admin-users/admin-users.component';
     AdminUsersComponent
   ],
   templateUrl: './admin.component.html',
-  styles: [`
-    .font-michroma { font-family: 'Michroma', sans-serif; }
-    .glass-panel {
-      background: rgba(20, 20, 23, 0.9);
-      backdrop-filter: blur(12px);
-    }
-  `]
+  styleUrl: './admin.component.scss'
 })
 export class AdminComponent {
   authService = inject(AuthService);

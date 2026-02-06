@@ -14,17 +14,7 @@ interface Message {
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './chatbot.component.html',
-  styles: [`
-    @keyframes fade-in-up {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .animate-fade-in-up {
-      animation: fade-in-up 0.3s ease-out forwards;
-    }
-    .font-michroma { font-family: 'Michroma', sans-serif; }
-    .font-montserrat { font-family: 'Montserrat', sans-serif; }
-  `]
+  styleUrl: './chatbot.component.scss'
 })
 export class ChatbotComponent {
   private geminiService = inject(GeminiService);

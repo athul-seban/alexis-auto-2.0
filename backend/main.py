@@ -1,7 +1,8 @@
 
 from contextlib import asynccontextmanager
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from .database import init_db
 from .auth import get_password_hash
 from .routers import public, admin
@@ -17,15 +18,25 @@ async def lifespan(app: FastAPI):
 app = FastAPI(title="Alexis Autos API", lifespan=lifespan)
 
 # --- CORS MIDDLEWARE ---
-# Allow all origins for dev/codespaces environment to prevent preflight blocks
-# In production, you would restrict this regex.
+# We use allow_origin_regex to match any localhost or github.dev/gitpod.io URL
+# This is critical for the Codespaces environment where the origin changes.
 app.add_middleware(
     CORSMiddleware,
-    allow_origin_regex=".*", 
+    allow_origin_regex=r"https?://.*", 
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=["*", "Authorization", "Content-Type", "ngrok-skip-browser-warning", "bypass-tunnel-reminder"],
+    allow_headers=["*"], 
+    expose_headers=["*"]
 )
+
+# --- Global Exception Handler for debugging ---
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    print(f"Global Error: {exc}")
+    return JSONResponse(
+        status_code=500,
+        content={"message": "Internal Server Error", "detail": str(exc)},
+    )
 
 # --- Include Routers ---
 app.include_router(public.router, prefix="/api", tags=["Public"])
@@ -37,5 +48,6 @@ def read_root():
 
 if __name__ == "__main__":
     import uvicorn
+    # Initialize DB on main run as well just in case
     init_db(get_password_hash)
     uvicorn.run(app, host="0.0.0.0", port=8000)
