@@ -97,17 +97,29 @@ export class DataService {
     
     const hostname = window.location.hostname;
     
-    // If Frontend is on Localhost, assume Backend is also on Localhost
+    // 1. Localhost Development
     if (hostname === 'localhost' || hostname === '127.0.0.1') {
        return `${window.location.protocol}//${window.location.hostname}:8000/api`;
     }
 
-    // Remote Environment
+    // 2. GitHub Codespaces / Gitpod Auto-Detection
+    // Replaces the frontend port suffix (usually -3000 or -4200) with the backend port -8000
+    if (hostname.includes('github.dev') || hostname.includes('gitpod.io') || hostname.includes('app.github.dev')) {
+      // Regex to find -3000, -4200, or similar port suffixes in the first part of the domain
+      const newHostname = hostname.replace(/-[0-9]+(?=\.)/, '-8000');
+      
+      // If regex didn't change anything (maybe format is different), try simple replacement or keep as is
+      if (newHostname !== hostname) {
+        return `https://${newHostname}/api`;
+      }
+    }
+
+    // 3. Environment Variable Fallback (Production or Manual override)
     if (environment.apiUrl && environment.apiUrl !== '') {
         return environment.apiUrl.endsWith('/api') ? environment.apiUrl : `${environment.apiUrl}/api`;
     }
     
-    // Fallback
+    // 4. Default Fallback (Same Origin or port 8000)
     return `${window.location.protocol}//${window.location.hostname}:8000/api`;
   }
 
@@ -156,6 +168,7 @@ export class DataService {
   }
 
   public async initializeData() {
+    console.log('Connecting to API:', this.apiUrl);
     try {
       await Promise.all([
         this.loadCars(),
@@ -164,7 +177,7 @@ export class DataService {
         this.loadBrands(),
         this.loadSettings()
       ]);
-      console.log('Sync complete with Backend API:', this.apiUrl);
+      console.log('Sync complete.');
     } catch (e) {
       console.error('API Connection Failed. Please ensure backend is running or check API URL configuration.', e);
     }

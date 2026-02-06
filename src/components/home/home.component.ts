@@ -101,7 +101,8 @@ type Page = 'home' | 'services' | 'tyres' | 'cars' | 'contact' | 'about';
             <div class="relative w-full max-w-[96%] mx-auto px-4 mt-8">
                <div class="relative rounded-3xl overflow-hidden h-[70vh] border border-white/10 shadow-2xl">
                  <div class="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent z-10"></div>
-                 <img ngSrc="https://picsum.photos/seed/luxury-car/1920/1080" width="1920" height="1080" class="w-full h-full object-cover" priority alt="Luxury Sports Car in Showroom">
+                 <!-- Using 'fill' because the container size is dynamic and we want cover behavior without aspect-ratio warnings -->
+                 <img ngSrc="https://picsum.photos/seed/luxury-car/1920/1080" fill priority class="object-cover" alt="Luxury Sports Car in Showroom">
                  
                  <div class="absolute inset-0 z-20 flex flex-col justify-center px-8 md:px-16">
                    <span class="text-[#E30613] font-bold tracking-[0.4em] text-xs md:text-sm uppercase mb-4 animate-slide-in-right">Loughborough's Finest</span>
@@ -413,7 +414,7 @@ type Page = 'home' | 'services' | 'tyres' | 'cars' | 'contact' | 'about';
                         <div>
                            <p class="text-[10px] text-gray-500 uppercase tracking-widest mb-1">WhatsApp / Message</p>
                            <a [href]="getWhatsAppLink(dataService.companyInfo().contact.whatsapp)" target="_blank" class="flex items-center gap-2 text-lg font-bold text-white hover:text-[#E30613] transition-colors">
-                              <svg viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 text-[#E30613] shrink-0"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.506-.669-.514l-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.015-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+                              <svg viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 text-[#E30613] shrink-0"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.123.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.506-.669-.514l-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.015-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
                               {{ dataService.companyInfo().contact.whatsapp }}
                            </a>
                         </div>
@@ -728,29 +729,68 @@ type Page = 'home' | 'services' | 'tyres' | 'cars' | 'contact' | 'about';
       }
 
     </div>
-  `
+  `,
+  styles: [`
+    .font-michroma { font-family: 'Michroma', sans-serif; }
+    .brand-font { font-family: 'Michroma', sans-serif; }
+    .sub-brand-font { font-family: 'Montserrat', sans-serif; }
+    
+    .glass-panel {
+      background: rgba(15, 15, 17, 0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+    
+    .liquid-chrome-text {
+       background: linear-gradient(to bottom, #ffffff 0%, #a0a0a0 50%, #ffffff 100%);
+       -webkit-background-clip: text;
+       -webkit-text-fill-color: transparent;
+       filter: drop-shadow(0px 0px 5px rgba(255,255,255,0.3));
+    }
+
+    @keyframes fade-in {
+       from { opacity: 0; transform: translateY(10px); }
+       to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in {
+       animation: fade-in 0.6s ease-out forwards;
+    }
+
+    @keyframes slide-in-right {
+       from { opacity: 0; transform: translateX(-20px); }
+       to { opacity: 1; transform: translateX(0); }
+    }
+    .animate-slide-in-right {
+       animation: slide-in-right 0.8s ease-out forwards;
+    }
+    
+    /* Custom Scrollbar for Modal */
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: #0f0f11; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #E30613; }
+  `]
 })
 export class HomeComponent {
-  currentPage = signal<Page>('home');
-  mobileMenuOpen = signal(false);
-  bookingSubmitted = signal(false);
-  
-  // Tyre Search State
-  tyreSearchQuery = signal('');
-  foundTyres = signal<TyreProduct[]>([]);
-  partnerBrands = ['Audi', 'BMW', 'Mercedes-Benz', 'Volkswagen', 'Land Rover', 'Porsche'];
-
-  // New: Car Details Modal
-  selectedCar = signal<Car | null>(null);
-  
-  // New: Booking Modal
-  isBookingModalOpen = signal(false);
-  
-  private titleService = inject(Title);
-  private metaService = inject(Meta);
   public dataService = inject(DataService);
   private router = inject(Router);
-  private fb: FormBuilder = inject(FormBuilder);
+  private fb = inject(FormBuilder);
+
+  currentPage = signal<Page>('home');
+  mobileMenuOpen = signal(false);
+  
+  // Search
+  tyreSearchQuery = '';
+  foundTyres = signal<TyreProduct[]>([]);
+
+  // Car Modal
+  selectedCar = signal<Car | null>(null);
+  
+  // Booking Modal
+  isBookingModalOpen = signal(false);
+  bookingSubmitted = signal(false);
+
+  partnerBrands = ['MICHELIN', 'PIRELLI', 'CONTINENTAL', 'BRIDGESTONE', 'GOODYEAR', 'DUNLOP'];
 
   bookingForm: FormGroup = this.fb.group({
     customerName: ['', Validators.required],
@@ -761,116 +801,72 @@ export class HomeComponent {
   });
 
   resolvePage(item: string): Page {
-    const lowerItem = item.toLowerCase();
-    if (lowerItem === 'buy a car') return 'cars';
-    if (lowerItem === 'service') return 'services';
-    return lowerItem as Page;
+    const map: Record<string, Page> = {
+        'Home': 'home',
+        'Service': 'services',
+        'Tyres': 'tyres',
+        'Buy a Car': 'cars',
+        'Contact': 'contact',
+        'About': 'about'
+    };
+    return map[item] || 'home';
   }
 
   navigateTo(page: Page) {
     this.currentPage.set(page);
     this.mobileMenuOpen.set(false);
-    this.tyreSearchQuery.set('');
-    this.foundTyres.set([]); // Reset search on nav
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    this.updateSEO(page);
-  }
-
-  navigateToAdmin() {
-    this.router.navigate(['/admin']);
-  }
-
-  scrollToBooking(preselectService?: string) {
-    const bookingSection = document.getElementById('booking-section');
-    if (bookingSection) {
-      bookingSection.scrollIntoView({ behavior: 'smooth' });
-      if (preselectService) {
-        this.bookingForm.patchValue({ serviceType: preselectService });
-      }
-    }
-  }
-
-  // Tyre Search Logic
-  searchTyres() {
-    const query = this.tyreSearchQuery().trim();
-    if (query.length > 2) {
-      const results = this.dataService.searchTyres(query);
-      this.foundTyres.set(results);
-    }
-  }
-
-  bookTyre(tyre: TyreProduct) {
-    const query = this.tyreSearchQuery().toUpperCase();
-    const notes = `Selected Tyre: ${tyre.brand} ${tyre.model} (${tyre.size}). Vehicle Reg/Model: ${query}`;
-    
-    this.bookingForm.patchValue({
-      serviceType: 'Car Tyres',
-      notes: notes
-    });
-    
-    this.isBookingModalOpen.set(true);
-  }
-  
-  // Car Details Logic
-  viewCarDetails(car: Car) {
-    this.selectedCar.set(car);
-  }
-  
-  closeCarDetails() {
-    this.selectedCar.set(null);
-  }
-  
-  enquireCar(car: Car) {
-    this.closeCarDetails();
-    const notes = `Inquiry about Vehicle: ${car.year} ${car.model} (£${car.price})`;
-    this.bookingForm.patchValue({
-       serviceType: 'Car Sales', 
-       notes: notes
-    });
-    this.isBookingModalOpen.set(true);
-  }
-
-  // Booking Modal Logic
-  openBookingModal(serviceName?: string) {
-     this.bookingSubmitted.set(false);
-     this.bookingForm.reset();
-     if(serviceName) {
-        this.bookingForm.patchValue({ serviceType: serviceName });
-     }
-     this.isBookingModalOpen.set(true);
-  }
-
-  closeBookingModal() {
-     this.isBookingModalOpen.set(false);
-     this.bookingSubmitted.set(false);
   }
 
   toggleMobileMenu() {
     this.mobileMenuOpen.update(v => !v);
   }
 
-  getWhatsAppLink(phone: string): string {
-    const cleanNumber = phone.replace(/[\s+-]/g, '');
-    return `https://wa.me/${cleanNumber}`;
+  searchTyres() {
+    if (this.tyreSearchQuery.trim().length < 2) return;
+    const res = this.dataService.searchTyres(this.tyreSearchQuery);
+    this.foundTyres.set(res);
+  }
+
+  viewCarDetails(car: Car) {
+    this.selectedCar.set(car);
+  }
+
+  closeCarDetails() {
+    this.selectedCar.set(null);
+  }
+
+  enquireCar(car: Car) {
+    this.selectedCar.set(null);
+    this.openBookingModal(`Car Interest: ${car.model} (${car.year})`);
+  }
+
+  openBookingModal(serviceName?: string) {
+    if (serviceName) {
+      this.bookingForm.patchValue({ serviceType: serviceName });
+    }
+    this.isBookingModalOpen.set(true);
+    this.bookingSubmitted.set(false);
+  }
+
+  closeBookingModal() {
+    this.isBookingModalOpen.set(false);
+    this.bookingForm.reset();
   }
 
   submitBooking() {
     if (this.bookingForm.valid) {
-      this.dataService.addBooking(this.bookingForm.value);
-      this.bookingSubmitted.set(true);
-      
-      if (!this.isBookingModalOpen()) {
-        this.bookingForm.reset();
-        setTimeout(() => this.bookingSubmitted.set(false), 5000);
-      }
+      this.dataService.addBooking(this.bookingForm.value).subscribe(() => {
+        this.bookingSubmitted.set(true);
+      });
     }
   }
 
-  private updateSEO(page: Page) {
-    let title = 'Alexis Autos Limited | Loughborough';
-    let desc = 'Premium automotive services in Loughborough. Tyres, servicing, and luxury car sales.';
-    // ... rest of logic unchanged, just strings
-    this.titleService.setTitle(title);
-    this.metaService.updateTag({ name: 'description', content: desc });
+  navigateToAdmin() {
+    this.router.navigate(['/admin']);
+  }
+
+  getWhatsAppLink(number: string) {
+    return `https://wa.me/${number.replace(/[^0-9]/g, '')}`;
   }
 }
