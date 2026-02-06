@@ -1,19 +1,13 @@
 
-<div class="min-h-screen p-6 md:p-12 transition-colors duration-300"
-     [class.bg-black]="dataService.theme() === 'dark'"
-     [class.text-white]="dataService.theme() === 'dark'"
-     [class.bg-gray-100]="dataService.theme() === 'light'"
-     [class.text-gray-900]="dataService.theme() === 'light'">
+<div class="min-h-screen p-6 md:p-12 transition-colors duration-300" style="background-color: var(--bg-page); color: var(--text-primary);">
      
   <!-- HEADER -->
   <div class="flex justify-between items-center mb-12 border-b pb-6"
-       [class.border-white-10]="dataService.theme() === 'dark'"
-       [class.border-black-10]="dataService.theme() === 'light'"
        style="border-color: var(--border-color)">
     <h1 (click)="goHome()" class="text-2xl font-bold italic font-michroma text-[#E30613] cursor-pointer hover:opacity-80 transition-opacity">ALEXIS ADMIN</h1>
     @if (authService.isLoggedIn()) {
       <div class="flex items-center gap-4">
-         <span class="text-sm opacity-70">Logged in as: <strong [class.text-white]="dataService.theme() === 'dark'" [class.text-black]="dataService.theme() === 'light'">{{ authService.currentUser() }}</strong></span>
+         <span class="text-sm opacity-70">Logged in as: <strong class="font-bold">{{ authService.currentUser() }}</strong></span>
          <button (click)="authService.logout()" class="text-xs bg-[#E30613] text-white px-4 py-2 rounded transition-colors uppercase tracking-wider hover:bg-red-700">Logout</button>
       </div>
     }
@@ -33,19 +27,19 @@
         <button (click)="activeTab.set('bookings')" 
                 [class.bg-[#E30613]]="activeTab() === 'bookings'" 
                 [class.text-white]="activeTab() === 'bookings'"
-                [class.hover-bg-white-10]="dataService.theme() === 'dark'"
-                [class.hover-bg-black-10]="dataService.theme() === 'light'"
-                class="w-full text-left p-3 rounded transition-colors uppercase text-sm font-bold tracking-wider flex justify-between items-center hover:opacity-80">
+                class="w-full text-left p-3 rounded transition-colors uppercase text-sm font-bold tracking-wider flex justify-between items-center hover:opacity-80 border border-transparent"
+                [class.border-white-10]="activeTab() !== 'bookings'"
+                style="border-color: activeTab() !== 'bookings' ? 'var(--border-color)' : 'transparent'">
            Bookings
            @if (getPendingCount() > 0) {
              <span class="bg-white text-[#E30613] px-2 py-0.5 rounded-full text-[10px] font-bold">{{ getPendingCount() }}</span>
            }
         </button>
         
-        <button (click)="activeTab.set('content')" [class.bg-[#E30613]]="activeTab() === 'content'" [class.text-white]="activeTab() === 'content'" class="w-full text-left p-3 rounded hover:opacity-80 transition-colors uppercase text-sm font-bold tracking-wider">Content & Services</button>
-        <button (click)="activeTab.set('inventory')" [class.bg-[#E30613]]="activeTab() === 'inventory'" [class.text-white]="activeTab() === 'inventory'" class="w-full text-left p-3 rounded hover:opacity-80 transition-colors uppercase text-sm font-bold tracking-wider">Car Inventory</button>
-        <button (click)="activeTab.set('tyres')" [class.bg-[#E30613]]="activeTab() === 'tyres'" [class.text-white]="activeTab() === 'tyres'" class="w-full text-left p-3 rounded hover:opacity-80 transition-colors uppercase text-sm font-bold tracking-wider">Tyre Stock & Brands</button>
-        <button (click)="activeTab.set('users')" [class.bg-[#E30613]]="activeTab() === 'users'" [class.text-white]="activeTab() === 'users'" class="w-full text-left p-3 rounded hover:opacity-80 transition-colors uppercase text-sm font-bold tracking-wider">System & Users</button>
+        <button (click)="activeTab.set('content')" [class.bg-[#E30613]]="activeTab() === 'content'" [class.text-white]="activeTab() === 'content'" class="w-full text-left p-3 rounded hover:opacity-80 transition-colors uppercase text-sm font-bold tracking-wider border border-transparent" style="border-color: activeTab() !== 'content' ? 'var(--border-color)' : 'transparent'">Content & Services</button>
+        <button (click)="activeTab.set('inventory')" [class.bg-[#E30613]]="activeTab() === 'inventory'" [class.text-white]="activeTab() === 'inventory'" class="w-full text-left p-3 rounded hover:opacity-80 transition-colors uppercase text-sm font-bold tracking-wider border border-transparent" style="border-color: activeTab() !== 'inventory' ? 'var(--border-color)' : 'transparent'">Car Inventory</button>
+        <button (click)="activeTab.set('tyres')" [class.bg-[#E30613]]="activeTab() === 'tyres'" [class.text-white]="activeTab() === 'tyres'" class="w-full text-left p-3 rounded hover:opacity-80 transition-colors uppercase text-sm font-bold tracking-wider border border-transparent" style="border-color: activeTab() !== 'tyres' ? 'var(--border-color)' : 'transparent'">Tyre Stock & Brands</button>
+        <button (click)="activeTab.set('users')" [class.bg-[#E30613]]="activeTab() === 'users'" [class.text-white]="activeTab() === 'users'" class="w-full text-left p-3 rounded hover:opacity-80 transition-colors uppercase text-sm font-bold tracking-wider border border-transparent" style="border-color: activeTab() !== 'users' ? 'var(--border-color)' : 'transparent'">System & Users</button>
       </div>
 
       <!-- CONTENT AREA -->

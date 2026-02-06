@@ -18,89 +18,45 @@
   background: #E30613;
 }
 
+/* --- THEME VARIABLES --- */
 :root {
-  --bg-body: #050505;
-  --bg-card: #0a0a0a;
-  --bg-glass: rgba(20, 20, 23, 0.6);
-  --text-main: #e5e5e5;
-  --text-muted: #9ca3af;
+  /* Brand Identity: Dark Mode (Default) */
+  --bg-page: #050505;
+  --bg-panel: rgba(20, 20, 23, 0.6); 
+  --bg-card: #0f0f11;
+  --bg-input: #000000;
+  
+  --text-primary: #e5e5e5;
+  --text-secondary: #9ca3af; /* Gray 400 */
+  --text-muted: #6b7280;
+  
   --border-color: rgba(255, 255, 255, 0.1);
+  --shadow-color: rgba(0,0,0,0.5);
 }
 
 body.light-mode {
-  --bg-body: #f3f4f6;
-  --bg-card: #ffffff;
-  --bg-glass: rgba(255, 255, 255, 0.9);
-  --text-main: #111827;
-  --text-muted: #4b5563;
-  --border-color: rgba(0, 0, 0, 0.1);
+  /* Brand Identity: Light Mode */
+  --bg-page: #F9FAFB; /* Light Gray Page */
+  --bg-panel: rgba(255, 255, 255, 0.85); 
+  --bg-card: #FFFFFF;
+  --bg-input: #FFFFFF;
+  
+  --text-primary: #111827; /* Near Black */
+  --text-secondary: #374151; /* Gray 700 */
+  --text-muted: #6b7280;
+  
+  --border-color: #E5E7EB; /* Gray 200 */
+  --shadow-color: rgba(0,0,0,0.05);
 }
 
 body {
-  background-color: var(--bg-body);
-  color: var(--text-main);
+  background-color: var(--bg-page);
+  color: var(--text-primary);
   font-family: 'Inter', sans-serif;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Light Mode Overrides */
-body.light-mode .bg-black,
-body.light-mode .bg-gray-900,
-body.light-mode .bg-\[\#0f0f11\],
-body.light-mode .bg-\[\#050505\] {
-    background-color: var(--bg-card) !important;
-    color: var(--text-main) !important;
-}
-
-body.light-mode .text-white {
-    color: var(--text-main) !important;
-}
-
-body.light-mode .text-gray-300,
-body.light-mode .text-gray-400,
-body.light-mode .text-gray-500 {
-    color: var(--text-muted) !important;
-}
-
-body.light-mode .border-white\/10,
-body.light-mode .border-white\/5,
-body.light-mode .border-white\/20, 
-body.light-mode .border-white\/30 {
-    border-color: var(--border-color) !important;
-}
-
-body.light-mode .bg-white\/5, 
-body.light-mode .bg-white\/10 {
-    background-color: #f8fafc !important; /* Slightly distinct gray for panels in light mode */
-    border: 1px solid var(--border-color) !important;
-}
-
-body.light-mode .bg-black\/40,
-body.light-mode .bg-black\/50,
-body.light-mode .bg-black\/80,
-body.light-mode .bg-black\/95 {
-    background-color: #ffffff !important;
-    color: var(--text-main) !important;
-    border-color: var(--border-color) !important;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-}
-
-/* Glass Panel Adaptation */
-body.light-mode .glass-panel {
-  background: var(--bg-glass) !important;
-  border-color: var(--border-color) !important;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-}
-
-/* Inputs in Light Mode */
-body.light-mode input, 
-body.light-mode textarea, 
-body.light-mode select {
-    background-color: #ffffff !important;
-    color: #111827 !important;
-    border-color: #d1d5db !important;
-}
-
+/* --- FONTS --- */
 h1, h2, h3, .brand-font {
   font-family: 'Michroma', sans-serif;
 }
@@ -123,12 +79,56 @@ body.light-mode .liquid-chrome-text {
   background: linear-gradient(to bottom, #111827 20%, #4b5563 80%);
   -webkit-background-clip: text;
   background-clip: text;
+  text-fill-color: transparent; 
   text-shadow: none;
 }
 
+/* --- ADAPTIVE UTILITY CLASSES --- */
+/* Use these instead of hardcoded tailwind classes for theme-sensitive elements */
+
+.text-adaptive {
+  color: var(--text-primary);
+  transition: color 0.3s;
+}
+
+.text-adaptive-secondary {
+  color: var(--text-secondary);
+  transition: color 0.3s;
+}
+
+.bg-adaptive {
+  background-color: var(--bg-page);
+  transition: background-color 0.3s;
+}
+
+.bg-card-adaptive {
+  background-color: var(--bg-card);
+  transition: background-color 0.3s;
+  border: 1px solid var(--border-color);
+}
+
+.border-adaptive {
+  border-color: var(--border-color);
+}
+
 .glass-panel {
-  background: var(--bg-glass);
+  background: var(--bg-panel);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  box-shadow: 0 4px 6px -1px var(--shadow-color);
+}
+
+/* Inputs */
+input.input-adaptive, 
+select.input-adaptive, 
+textarea.input-adaptive {
+    background-color: var(--bg-input);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+input.input-adaptive::placeholder {
+  color: var(--text-muted);
 }

@@ -145,11 +145,9 @@ export class DataService {
   banner = signal<Banner>({ active: false, reason: '' });
 
   constructor() {
-    // Theme Init
+    // Theme Init - Force apply immediately
     const storedTheme = localStorage.getItem('alexis_theme') as 'dark' | 'light';
-    if (storedTheme) {
-      this.setTheme(storedTheme);
-    }
+    this.setTheme(storedTheme || 'dark');
     
     // Check if we should force start in Demo Mode (e.g. from Admin setting)
     const storedDemo = localStorage.getItem('alexis_demo_mode');
@@ -168,6 +166,7 @@ export class DataService {
     } else {
       document.body.classList.remove('light-mode');
     }
+    console.log('Theme set to:', theme);
   }
 
   toggleTheme() {
