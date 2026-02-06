@@ -1,4 +1,8 @@
 
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
@@ -23,89 +27,11 @@
   --border-color: rgba(255, 255, 255, 0.1);
 }
 
-body.light-mode {
-  --bg-body: #f3f4f6;
-  --bg-card: #ffffff;
-  --bg-glass: rgba(255, 255, 255, 0.95);
-  --text-main: #111827;
-  --text-muted: #4b5563;
-  --border-color: rgba(0, 0, 0, 0.1);
-}
-
 body {
   background-color: var(--bg-body);
   color: var(--text-main);
   font-family: 'Inter', sans-serif;
   transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-/* Light Mode Overrides */
-body.light-mode .bg-black,
-body.light-mode .bg-gray-900,
-body.light-mode .bg-\[\#0f0f11\],
-body.light-mode .bg-\[\#050505\] {
-    background-color: var(--bg-card) !important;
-    color: var(--text-main) !important;
-}
-
-body.light-mode .text-white {
-    color: var(--text-main) !important;
-}
-
-body.light-mode .text-gray-300,
-body.light-mode .text-gray-400,
-body.light-mode .text-gray-500 {
-    color: var(--text-muted) !important;
-}
-
-body.light-mode .border-white\/10,
-body.light-mode .border-white\/5,
-body.light-mode .border-white\/20, 
-body.light-mode .border-white\/30 {
-    border-color: var(--border-color) !important;
-}
-
-body.light-mode .bg-white\/5, 
-body.light-mode .bg-white\/10 {
-    background-color: rgba(0,0,0, 0.05) !important;
-}
-
-body.light-mode .bg-black\/40,
-body.light-mode .bg-black\/50,
-body.light-mode .bg-black\/80,
-body.light-mode .bg-black\/95 {
-    background-color: rgba(255, 255, 255, 0.9) !important;
-    color: var(--text-main) !important;
-    border-color: var(--border-color) !important;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-}
-
-/* Glass Panel Adaptation */
-body.light-mode .glass-panel {
-  background: var(--bg-glass) !important;
-  border-color: var(--border-color) !important;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-}
-
-/* Inputs in Light Mode */
-body.light-mode input, 
-body.light-mode textarea, 
-body.light-mode select {
-    background-color: #ffffff !important;
-    color: #111827 !important;
-    border-color: #d1d5db !important;
-}
-
-/* Red Identity Protection */
-.text-\[\#E30613\] {
-    color: #E30613 !important;
-}
-.bg-\[\#E30613\] {
-    background-color: #E30613 !important;
-}
-body.light-mode .hover\:bg-\[\#E30613\]:hover {
-    background-color: #E30613 !important;
-    color: white !important;
 }
 
 h1, h2, h3, .brand-font {
@@ -124,13 +50,6 @@ h1, h2, h3, .brand-font {
   background-clip: text;
   text-fill-color: transparent;
   text-shadow: 0px 2px 4px rgba(0,0,0,0.3);
-}
-
-body.light-mode .liquid-chrome-text {
-  background: linear-gradient(to bottom, #111827 20%, #4b5563 80%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  text-shadow: none;
 }
 
 .glass-panel {
