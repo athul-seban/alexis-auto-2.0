@@ -7,7 +7,8 @@ import { DataService } from '../../../services/data.service';
 @Component({
   selector: 'app-home-contact',
   imports: [CommonModule, ReactiveFormsModule],
-  templateUrl: './home-contact.component.html'
+  templateUrl: './home-contact.component.html',
+  styleUrl: './home-contact.component.scss'
 })
 export class HomeContactComponent {
   dataService = inject(DataService);

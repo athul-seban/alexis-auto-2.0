@@ -18,12 +18,13 @@ async def lifespan(app: FastAPI):
 app = FastAPI(title="Alexis Autos API", lifespan=lifespan)
 
 # --- CORS MIDDLEWARE ---
-# We use allow_origin_regex to match any localhost or github.dev/gitpod.io URL
-# This is critical for the Codespaces environment where the origin changes.
+# Using allow_origins=["*"] with allow_credentials=False is the most robust way 
+# to handle dynamic Codespace URLs where the origin domain changes.
+# The frontend does not use cookies for auth (uses Bearer token), so credentials are not needed.
 app.add_middleware(
     CORSMiddleware,
-    allow_origin_regex=r"https?://.*", 
-    allow_credentials=True,
+    allow_origins=["*"], 
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"], 
     expose_headers=["*"]

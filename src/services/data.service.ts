@@ -175,7 +175,12 @@ export class DataService {
       console.log('Sync complete.');
     } catch (e: any) {
       console.error('API Connection Failed.', e);
+      // Status 0 usually means CORS error or Network Reachability (Private Port)
       if (e.status === 0) {
+        this.banner.set({ 
+            active: true, 
+            reason: 'CONNECTION ERROR: Please check if Backend Port 8000 is Public (Codespaces > Ports)' 
+        });
         console.warn('%c CRITICAL: CORS or Connection Error.', 'color: red; font-size: 16px; font-weight: bold;');
         console.warn('If you are using GitHub Codespaces, ensure Port 8000 visibility is set to PUBLIC in the "PORTS" tab.');
       }
@@ -183,7 +188,6 @@ export class DataService {
   }
 
   private getOptions(auth: boolean = false) {
-    // These headers help with some proxy warnings (like Ngrok or sometimes Codespaces)
     let headers = new HttpHeaders({
       'ngrok-skip-browser-warning': 'true',
       'Bypass-Tunnel-Reminder': 'true'
@@ -223,7 +227,7 @@ export class DataService {
   private async loadSettings() {
     try {
       const banner = await firstValueFrom(this.http.get<Banner>(`${this.apiUrl}/settings/banner`, this.getOptions(false)));
-      if (banner) this.banner.set(banner);
+      if (banner && banner.active) this.banner.set(banner);
 
       const info = await firstValueFrom(this.http.get<CompanyInfo>(`${this.apiUrl}/settings/companyInfo`, this.getOptions(false)));
       if (info) this.companyInfo.set(info);

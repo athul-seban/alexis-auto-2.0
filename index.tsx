@@ -6,6 +6,7 @@ import { AppComponent } from './src/app.component';
 import { provideHttpClient } from '@angular/common/http';
 import { provideRouter, withHashLocation } from '@angular/router';
 import { routes } from './src/app.routes';
+import './src/styles.scss';
 
 bootstrapApplication(AppComponent, {
   providers: [
