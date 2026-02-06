@@ -85,6 +85,15 @@ export interface CompanyInfo {
   };
   openingHours: { day: string; hours: string; }[];
   facilities: string[];
+  about: string; 
+  socialMedia: {
+    facebook: string;
+    instagram: string;
+  };
+  logos: {
+    dark: string; // Logo for Dark Mode (usually light colored)
+    light: string; // Logo for Light Mode (usually dark colored)
+  };
 }
 
 @Injectable({
@@ -139,7 +148,10 @@ export class DataService {
     contact: { email: "", phone: "", whatsapp: "" },
     address: { lines: [] },
     openingHours: [],
-    facilities: []
+    facilities: [],
+    about: "",
+    socialMedia: { facebook: "", instagram: "" },
+    logos: { dark: "", light: "" }
   });
 
   banner = signal<Banner>({ active: false, reason: '' });
@@ -256,7 +268,10 @@ export class DataService {
       contact: { email: "demo@alexisautos.com", phone: "07700 900000", whatsapp: "07700 900000" },
       address: { lines: ["Demo Street", "Loughborough", "LE11 1AA"] },
       openingHours: [{ day: "Mon-Fri", hours: "9am - 6pm" }],
-      facilities: ["Demo Lounge", "Free Wifi"]
+      facilities: ["Demo Lounge", "Free Wifi"],
+      about: "Alexis Autos Limited represents speed, precision, and automotive excellence. Established in Loughborough, we have dedicated ourselves to providing top-tier service for enthusiasts of luxury and sports vehicles. Our state-of-the-art facility is equipped to handle everything from routine maintenance to complex engine diagnostics. We believe in transparency, quality, and performance.",
+      socialMedia: { facebook: "https://facebook.com", instagram: "https://instagram.com" },
+      logos: { dark: "", light: "" }
     });
   }
 
@@ -304,7 +319,19 @@ export class DataService {
       if (banner && banner.active) this.banner.set(banner);
 
       const info = await firstValueFrom(this.http.get<CompanyInfo>(`${this.apiUrl}/settings/companyInfo`, this.getOptions(false)));
-      if (info) this.companyInfo.set(info);
+      if (info) {
+        // Ensure defaults for new fields if backend data is old
+        if (!info.about) {
+           info.about = "Alexis Autos Limited represents speed, precision, and automotive excellence.";
+        }
+        if (!info.socialMedia) {
+           info.socialMedia = { facebook: "", instagram: "" };
+        }
+        if (!info.logos) {
+           info.logos = { dark: "", light: "" };
+        }
+        this.companyInfo.set(info);
+      }
     } catch (e) { console.warn('Could not load settings'); }
   }
 
@@ -464,13 +491,20 @@ export class DataService {
     });
   }
 
-  updateCompanyContact(contact: CompanyInfo['contact']) {
-    if (this.isDemoMode()) return;
-    const current = this.companyInfo();
-    const payload = { ...current, contact };
-    this.http.post(`${this.apiUrl}/settings`, { key: 'companyInfo', value: payload }, this.getOptions(true)).subscribe(() => {
-      this.companyInfo.set(payload);
+  // Generic settings update for CompanyInfo
+  updateCompanySettings(info: CompanyInfo) {
+    if (this.isDemoMode()) {
+      this.companyInfo.set(info);
+      return;
+    }
+    this.http.post(`${this.apiUrl}/settings`, { key: 'companyInfo', value: info }, this.getOptions(true)).subscribe(() => {
+      this.companyInfo.set(info);
     });
+  }
+
+  updateCompanyContact(contact: CompanyInfo['contact']) {
+     const current = this.companyInfo();
+     this.updateCompanySettings({ ...current, contact });
   }
 
   addUser(user: User) {

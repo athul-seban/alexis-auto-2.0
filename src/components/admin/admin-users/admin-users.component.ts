@@ -47,16 +47,14 @@ export class AdminUsersComponent {
     this.dataService.toggleTheme();
   }
 
-  toggleDemoMode() {
-    const currentState = this.dataService.isDemoMode();
-    this.dataService.toggleDemoMode(!currentState);
+  toggleBannerActive() {
+    const current = this.dataService.banner();
+    this.dataService.updateBanner(!current.active, current.reason);
   }
 
-  updateBanner(message: string) {
-    if (!message) {
-      this.dataService.updateBanner(false, '');
-    } else {
-      this.dataService.updateBanner(true, message);
-    }
+  updateBannerText(text: string) {
+    const current = this.dataService.banner();
+    this.dataService.updateBanner(current.active, text);
+    alert('Banner text updated');
   }
 }

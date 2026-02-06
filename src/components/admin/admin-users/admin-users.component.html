@@ -21,34 +21,28 @@
       </div>
    </div>
 
-   <!-- Demo Mode Toggle -->
-   <div class="flex items-center justify-between mb-6">
-      <div>
-        <p class="text-white font-bold text-sm">Demo / Offline Mode</p>
-        <p class="text-xs text-gray-500">Enable static data for demonstration purposes or when backend is unavailable.</p>
-      </div>
-      <button (click)="toggleDemoMode()" class="relative w-12 h-6 rounded-full transition-colors duration-300 focus:outline-none"
-         [class.bg-[#E30613]]="dataService.isDemoMode()"
-         [class.bg-gray-700]="!dataService.isDemoMode()">
-         <div class="absolute top-1 left-1 w-4 h-4 rounded-full bg-white transition-transform duration-300"
-           [class.translate-x-6]="dataService.isDemoMode()"></div>
-      </button>
-   </div>
-
    <!-- Banner Configuration -->
    <div>
-      <p class="text-white font-bold text-sm mb-2">System Banner / Announcement</p>
-      <p class="text-xs text-gray-500 mb-2">Set the text for the red banner at the top of the site. Use this for maintenance alerts or demo notices.</p>
-      <div class="flex gap-4">
-         <input #bannerInput [value]="dataService.banner().reason" placeholder="Enter banner message..." class="flex-1 bg-black border border-white/20 rounded p-2 text-sm text-white">
-         <button (click)="updateBanner(bannerInput.value)" class="bg-[#E30613] text-white px-4 py-2 rounded text-xs font-bold uppercase hover:bg-red-700 transition-colors">Update Banner</button>
+      <div class="flex items-center justify-between mb-4">
+          <div>
+            <p class="text-white font-bold text-sm">System Banner / Announcement</p>
+            <p class="text-xs text-gray-500">Enable or disable the site-wide announcement bar.</p>
+          </div>
+          <button (click)="toggleBannerActive()" class="relative w-12 h-6 rounded-full transition-colors duration-300 focus:outline-none"
+             [class.bg-[#E30613]]="dataService.banner().active"
+             [class.bg-gray-700]="!dataService.banner().active">
+             <div class="absolute top-1 left-1 w-4 h-4 rounded-full bg-white transition-transform duration-300"
+               [class.translate-x-6]="dataService.banner().active"></div>
+          </button>
       </div>
-      @if (dataService.banner().active) {
-         <div class="mt-2 flex items-center gap-2">
-            <span class="text-xs text-[#E30613] font-bold">● Banner Active</span>
-            <button (click)="updateBanner('')" class="text-xs text-gray-500 hover:text-white underline">Disable Banner</button>
+      
+      <div class="space-y-2">
+         <p class="text-xs text-gray-500 font-bold uppercase">Banner Message</p>
+         <div class="flex gap-4">
+             <input #bannerInput [value]="dataService.banner().reason" placeholder="Enter banner message (e.g. 'Closed for Bank Holiday')..." class="flex-1 bg-black border border-white/20 rounded p-2 text-sm text-white">
+             <button (click)="updateBannerText(bannerInput.value)" class="bg-white/10 text-white px-4 py-2 rounded text-xs font-bold uppercase hover:bg-white hover:text-black transition-colors border border-white/20">Save Text</button>
          </div>
-      }
+      </div>
    </div>
 </div>
 
