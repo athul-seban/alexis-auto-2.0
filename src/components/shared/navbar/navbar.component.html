@@ -1,0 +1,64 @@
+
+<div class="fixed top-0 left-0 right-0 z-40 px-4 py-4" [class.mt-12]="dataService.banner().active">
+  <nav class="w-full max-w-[96%] mx-auto rounded-2xl glass-panel border border-white/10 shadow-2xl">
+    <div class="px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        
+        <!-- Logo Area -->
+        <div class="flex items-center gap-3 cursor-pointer group" (click)="navigate.emit('home')">
+          <div class="flex flex-col">
+            <h1 class="text-xl font-bold italic tracking-widest text-white brand-font leading-none group-hover:text-[#E30613] transition-colors">ALEXIS</h1>
+            <div class="flex items-center gap-2">
+              <span class="text-[9px] text-gray-400 font-bold tracking-[0.3em] uppercase sub-brand-font group-hover:text-white transition-colors">Autos Ltd</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Desktop Menu -->
+        <div class="hidden md:block">
+          <div class="ml-10 flex items-baseline space-x-1">
+            @for (item of menuItems; track item) {
+              <button 
+                (click)="navigate.emit(resolvePage(item))"
+                class="relative px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-widest transition-all duration-300 sub-brand-font overflow-hidden group"
+                [class.text-white]="currentPage() === resolvePage(item)"
+                [class.text-gray-400]="currentPage() !== resolvePage(item)"
+              >
+                <span class="relative z-10 group-hover:text-white">{{ item }}</span>
+                <div class="absolute inset-0 bg-[#E30613] opacity-0 group-hover:opacity-100 transition-opacity duration-300 -skew-x-12 scale-x-0 group-hover:scale-x-100 origin-left"></div>
+                @if (currentPage() === resolvePage(item)) {
+                  <div class="absolute bottom-0 left-2 right-2 h-[2px] bg-[#E30613] shadow-[0_0_8px_#E30613]"></div>
+                }
+              </button>
+            }
+          </div>
+        </div>
+
+        <!-- Mobile Menu Button -->
+        <div class="-mr-2 flex md:hidden">
+          <button (click)="mobileMenuOpen.update(v => !v)" class="text-gray-400 hover:text-white inline-flex items-center justify-center p-2 rounded-md focus:outline-none">
+            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    @if (mobileMenuOpen()) {
+      <div class="md:hidden border-t border-white/10 bg-black/95 rounded-b-2xl">
+        <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+          @for (item of menuItems; track item) {
+            <button 
+              (click)="onMobileNavigate(item)"
+              class="text-gray-300 hover:text-[#E30613] block px-3 py-3 rounded-md text-sm font-bold uppercase tracking-widest w-full text-left"
+            >
+              {{ item }}
+            </button>
+          }
+        </div>
+      </div>
+    }
+  </nav>
+</div>

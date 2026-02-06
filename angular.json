@@ -34,8 +34,7 @@
         "serve": {
           "builder": "@angular/build:dev-server",
           "options": {
-            "port": 3000,
-            "allowedHosts": ["organic-space-invention-4g6q94wq9r737gr-3000.app.github.dev"]
+            "port": 3000
           },
           "configurations": {
             "production": {

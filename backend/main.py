@@ -17,12 +17,14 @@ async def lifespan(app: FastAPI):
 app = FastAPI(title="Alexis Autos API", lifespan=lifespan)
 
 # --- CORS MIDDLEWARE ---
+# Allow all origins for dev/codespaces environment to prevent preflight blocks
+# In production, you would restrict this regex.
 app.add_middleware(
     CORSMiddleware,
-    allow_origin_regex=r"https?://.*",
+    allow_origin_regex=".*", 
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=["*", "ngrok-skip-browser-warning", "bypass-tunnel-reminder"],
+    allow_headers=["*", "Authorization", "Content-Type", "ngrok-skip-browser-warning", "bypass-tunnel-reminder"],
 )
 
 # --- Include Routers ---
