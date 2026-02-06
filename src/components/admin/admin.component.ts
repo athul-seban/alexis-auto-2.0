@@ -5,11 +5,11 @@ import { Router } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, Validators, FormGroup, FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { DataService, Booking, Car, TyreProduct, ServiceItem } from '../../services/data.service';
+import { AdminLoginComponent } from './admin-login/admin-login.component';
 
 @Component({
   selector: 'app-admin',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, AdminLoginComponent],
   template: `
     <div class="min-h-screen bg-black text-white p-6 md:p-12">
       <!-- HEADER -->
@@ -25,25 +25,7 @@ import { DataService, Booking, Car, TyreProduct, ServiceItem } from '../../servi
 
       <!-- LOGIN VIEW -->
       @if (!authService.isLoggedIn()) {
-        <div class="max-w-md mx-auto glass-panel p-8 rounded-2xl border border-white/10">
-          <h2 class="text-xl font-bold mb-6 text-center">Admin Access</h2>
-          <form [formGroup]="loginForm" (ngSubmit)="onLogin()" class="space-y-4">
-            <div>
-              <label class="block text-xs uppercase text-gray-500 mb-1">Username</label>
-              <input formControlName="username" type="text" class="w-full bg-black/50 border border-white/20 rounded p-2 text-white focus:border-[#E30613] focus:outline-none">
-            </div>
-            <div>
-              <label class="block text-xs uppercase text-gray-500 mb-1">Password</label>
-              <input formControlName="password" type="password" class="w-full bg-black/50 border border-white/20 rounded p-2 text-white focus:border-[#E30613] focus:outline-none">
-            </div>
-            @if (loginError()) {
-              <p class="text-[#E30613] text-xs text-center">Invalid credentials</p>
-            }
-            <button type="submit" [disabled]="loading()" class="w-full bg-[#E30613] hover:bg-red-700 text-white font-bold py-3 rounded uppercase tracking-widest text-sm transition-colors disabled:opacity-50">
-              {{ loading() ? 'Verifying...' : 'Login' }}
-            </button>
-          </form>
-        </div>
+        <app-admin-login></app-admin-login>
       } 
       
       <!-- DASHBOARD VIEW -->
@@ -326,8 +308,6 @@ export class AdminComponent {
   router = inject(Router);
 
   activeTab = signal<'bookings' | 'inventory' | 'tyres' | 'banner' | 'users' | 'content'>('bookings');
-  loginError = signal(false);
-  loading = signal(false);
   passwordMsg = signal('');
   
   // Edit State
@@ -336,11 +316,6 @@ export class AdminComponent {
   editingServiceId = signal<number | null>(null);
 
   selectedBooking = signal<Booking | null>(null);
-
-  loginForm: FormGroup = this.fb.group({
-    username: ['', Validators.required],
-    password: ['', Validators.required]
-  });
 
   contactForm: FormGroup = this.fb.group({
      phone: ['', Validators.required],
@@ -396,23 +371,6 @@ export class AdminComponent {
 
   goHome() {
     this.router.navigate(['/']);
-  }
-
-  onLogin() {
-    if (this.loginForm.valid) {
-      this.loading.set(true);
-      const { username, password } = this.loginForm.value;
-      this.authService.login(username, password).subscribe({
-        next: () => {
-           this.loading.set(false);
-           this.loginError.set(false);
-        },
-        error: () => {
-           this.loading.set(false);
-           this.loginError.set(true);
-        }
-      });
-    }
   }
 
   getPendingCount(): number {

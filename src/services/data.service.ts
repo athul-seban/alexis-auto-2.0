@@ -333,7 +333,14 @@ export class DataService {
   searchTyres(vehicleQuery: string): TyreProduct[] {
     const query = vehicleQuery.toLowerCase();
     if (query.length < 2) return [];
-    return this.tyreInventory();
+    
+    // Perform client-side filtering on the inventory
+    return this.tyreInventory().filter(t => 
+      t.brand.toLowerCase().includes(query) || 
+      t.model.toLowerCase().includes(query) ||
+      t.size.toLowerCase().includes(query) ||
+      t.category.toLowerCase().includes(query)
+    );
   }
 
   // 5. BRANDS

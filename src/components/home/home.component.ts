@@ -1,18 +1,18 @@
 
 import { Component, signal, inject } from '@angular/core';
-import { CommonModule, NgOptimizedImage } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { Title, Meta } from '@angular/platform-browser';
-import { ReactiveFormsModule, FormBuilder, Validators, FormGroup, FormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, Validators, FormsModule } from '@angular/forms';
 import { ChatbotComponent } from '../chatbot/chatbot.component';
+import { NavbarComponent } from '../shared/navbar/navbar.component';
+import { FooterComponent } from '../shared/footer/footer.component';
 import { DataService, Car, TyreProduct } from '../../services/data.service';
 
 type Page = 'home' | 'services' | 'tyres' | 'cars' | 'contact' | 'about';
 
 @Component({
   selector: 'app-home',
-  standalone: true,
-  imports: [CommonModule, ChatbotComponent, NgOptimizedImage, ReactiveFormsModule, FormsModule],
+  imports: [CommonModule, ChatbotComponent, NavbarComponent, FooterComponent, ReactiveFormsModule, FormsModule],
   template: `
     <div class="min-h-screen flex flex-col relative overflow-x-hidden">
       
@@ -23,70 +23,11 @@ type Page = 'home' | 'services' | 'tyres' | 'cars' | 'contact' | 'about';
         </div>
       }
 
-      <!-- Modern Floating Navigation Bar -->
-      <div class="fixed top-0 left-0 right-0 z-40 px-4 py-4" [class.mt-12]="dataService.banner().active">
-        <nav class="w-full max-w-[96%] mx-auto rounded-2xl glass-panel border border-white/10 shadow-2xl">
-          <div class="px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16">
-              
-              <!-- Logo Area -->
-              <div class="flex items-center gap-3 cursor-pointer group" (click)="navigateTo('home')">
-                <div class="flex flex-col">
-                  <h1 class="text-xl font-bold italic tracking-widest text-white brand-font leading-none group-hover:text-[#E30613] transition-colors">ALEXIS</h1>
-                  <div class="flex items-center gap-2">
-                    <span class="text-[9px] text-gray-400 font-bold tracking-[0.3em] uppercase sub-brand-font group-hover:text-white transition-colors">Autos Ltd</span>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Desktop Menu -->
-              <div class="hidden md:block">
-                <div class="ml-10 flex items-baseline space-x-1">
-                  @for (item of ['Home', 'Service', 'Tyres', 'Buy a Car', 'Contact', 'About']; track item) {
-                    <button 
-                      (click)="navigateTo(resolvePage(item))"
-                      class="relative px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-widest transition-all duration-300 sub-brand-font overflow-hidden group"
-                      [class.text-white]="currentPage() === resolvePage(item)"
-                      [class.text-gray-400]="currentPage() !== resolvePage(item)"
-                    >
-                      <span class="relative z-10 group-hover:text-white">{{ item }}</span>
-                      <div class="absolute inset-0 bg-[#E30613] opacity-0 group-hover:opacity-100 transition-opacity duration-300 -skew-x-12 scale-x-0 group-hover:scale-x-100 origin-left"></div>
-                      @if (currentPage() === resolvePage(item)) {
-                        <div class="absolute bottom-0 left-2 right-2 h-[2px] bg-[#E30613] shadow-[0_0_8px_#E30613]"></div>
-                      }
-                    </button>
-                  }
-                </div>
-              </div>
-
-              <!-- Mobile Menu Button -->
-              <div class="-mr-2 flex md:hidden">
-                <button (click)="toggleMobileMenu()" class="text-gray-400 hover:text-white inline-flex items-center justify-center p-2 rounded-md focus:outline-none">
-                  <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                  </svg>
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Mobile Menu -->
-          @if (mobileMenuOpen()) {
-            <div class="md:hidden border-t border-white/10 bg-black/95 rounded-b-2xl">
-              <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-                @for (item of ['Home', 'Service', 'Tyres', 'Buy a Car', 'Contact', 'About']; track item) {
-                  <button 
-                    (click)="navigateTo(resolvePage(item))"
-                    class="text-gray-300 hover:text-[#E30613] block px-3 py-3 rounded-md text-sm font-bold uppercase tracking-widest w-full text-left"
-                  >
-                    {{ item }}
-                  </button>
-                }
-              </div>
-            </div>
-          }
-        </nav>
-      </div>
+      <!-- Reusable Navbar -->
+      <app-navbar 
+        [currentPage]="currentPage()" 
+        (navigate)="navigateTo($event)" 
+      ></app-navbar>
 
       <!-- Spacer for fixed header -->
       <div class="h-24" [class.mt-12]="dataService.banner().active"></div>
@@ -101,8 +42,8 @@ type Page = 'home' | 'services' | 'tyres' | 'cars' | 'contact' | 'about';
             <div class="relative w-full max-w-[96%] mx-auto px-4 mt-8">
                <div class="relative rounded-3xl overflow-hidden h-[70vh] border border-white/10 shadow-2xl">
                  <div class="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent z-10"></div>
-                 <!-- Using 'fill' because the container size is dynamic and we want cover behavior without aspect-ratio warnings -->
-                 <img ngSrc="https://picsum.photos/seed/luxury-car/1920/1080" fill priority class="object-cover" alt="Luxury Sports Car in Showroom">
+                 
+                 <img src="https://picsum.photos/seed/luxury-car/1920/1080" fetchpriority="high" class="absolute inset-0 w-full h-full object-cover" alt="Luxury Sports Car in Showroom">
                  
                  <div class="absolute inset-0 z-20 flex flex-col justify-center px-8 md:px-16">
                    <span class="text-[#E30613] font-bold tracking-[0.4em] text-xs md:text-sm uppercase mb-4 animate-slide-in-right">Loughborough's Finest</span>
@@ -414,7 +355,7 @@ type Page = 'home' | 'services' | 'tyres' | 'cars' | 'contact' | 'about';
                         <div>
                            <p class="text-[10px] text-gray-500 uppercase tracking-widest mb-1">WhatsApp / Message</p>
                            <a [href]="getWhatsAppLink(dataService.companyInfo().contact.whatsapp)" target="_blank" class="flex items-center gap-2 text-lg font-bold text-white hover:text-[#E30613] transition-colors">
-                              <svg viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 text-[#E30613] shrink-0"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.123.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.506-.669-.514l-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.015-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+                              <svg viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 text-[#E30613] shrink-0"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.506-.669-.514l-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.015-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
                               {{ dataService.companyInfo().contact.whatsapp }}
                            </a>
                         </div>
@@ -527,64 +468,8 @@ type Page = 'home' | 'services' | 'tyres' | 'cars' | 'contact' | 'about';
 
       </main>
 
-      <!-- Premium Footer (Updates with dynamic data) -->
-      <footer class="bg-black border-t border-white/10 py-16 mt-12">
-        <div class="w-full max-w-[96%] mx-auto px-4">
-          <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
-            <!-- Brand Column -->
-            <div class="col-span-1 md:col-span-1">
-              <h2 class="text-2xl font-bold italic brand-font text-white mb-4">ALEXIS</h2>
-              <p class="text-xs text-gray-500 leading-relaxed mb-6">High-performance automotive care. Precision engineering for the modern driver.</p>
-              <div class="flex space-x-4">
-                 <!-- Social Icons Unchanged -->
-                 <div class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#E30613] transition-colors cursor-pointer"><svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></div>
-                 <div class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#E30613] transition-colors cursor-pointer"><svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M16 8a6 6 0 0 1 6 6v7a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V14a6 6 0 0 1 6-6z"/><path d="M2 14v6h2v-6H2z"/><path d="M20 14v6h2v-6H20z"/><path d="M12 11a5 5 0 1 0 5 5 5 5 0 0 0-5-5zm0 8a3 3 0 1 1 3-3 3 3 0 0 1-3 3z"/></svg></div>
-              </div>
-            </div>
-
-            <!-- Contacts Column (DYNAMIC) -->
-            <div class="col-span-1 md:col-span-2">
-              <h3 class="text-sm font-bold text-white uppercase tracking-widest mb-6">Quick Contacts</h3>
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                 <div>
-                   <p class="text-xs text-gray-500 uppercase mb-1">Email Support</p>
-                   <a [href]="'mailto:' + dataService.companyInfo().contact.email" class="text-white hover:text-[#E30613] transition-colors">{{ dataService.companyInfo().contact.email }}</a>
-                 </div>
-                 <div>
-                   <p class="text-xs text-gray-500 uppercase mb-1">Emergency / Bookings</p>
-                   <a [href]="'tel:' + dataService.companyInfo().contact.phone.replace(' ', '')" class="text-white hover:text-[#E30613] transition-colors block">{{ dataService.companyInfo().contact.phone }}</a>
-                   <a [href]="getWhatsAppLink(dataService.companyInfo().contact.whatsapp)" target="_blank" class="text-white hover:text-[#E30613] transition-colors flex items-center gap-2 mt-1">
-                     <svg viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 text-[#E30613] shrink-0"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.506-.669-.514l-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.015-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
-                     {{ dataService.companyInfo().contact.whatsapp }}
-                   </a>
-                 </div>
-              </div>
-            </div>
-
-            <!-- Hours Column (DYNAMIC) -->
-            <div class="col-span-1 md:col-span-1">
-              <h3 class="text-sm font-bold text-white uppercase tracking-widest mb-6">Opening Hours</h3>
-              <div class="space-y-2">
-                @for (time of dataService.companyInfo().openingHours; track time.day) {
-                  <div class="flex justify-between text-xs">
-                    <span class="text-gray-400">{{ time.day }}</span>
-                    <span class="text-white">{{ time.hours }}</span>
-                  </div>
-                }
-              </div>
-            </div>
-          </div>
-          
-          <div class="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-gray-600">
-            <p>© 2024 Alexis Autos Limited. All rights reserved.</p>
-            <div class="flex space-x-6 mt-4 md:mt-0">
-              <a href="#" class="hover:text-white transition-colors">Privacy Policy</a>
-              <a href="#" class="hover:text-white transition-colors">Terms of Service</a>
-              <button (click)="navigateToAdmin()" class="hover:text-[#E30613] transition-colors font-bold uppercase text-[10px] tracking-widest">Admin Access</button>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <!-- Reusable Footer -->
+      <app-footer></app-footer>
 
       <!-- Chat Widget -->
       <app-chatbot></app-chatbot>
@@ -731,68 +616,65 @@ type Page = 'home' | 'services' | 'tyres' | 'cars' | 'contact' | 'about';
     </div>
   `,
   styles: [`
-    .font-michroma { font-family: 'Michroma', sans-serif; }
-    .brand-font { font-family: 'Michroma', sans-serif; }
-    .sub-brand-font { font-family: 'Montserrat', sans-serif; }
-    
-    .glass-panel {
-      background: rgba(15, 15, 17, 0.7);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-    }
-    
-    .liquid-chrome-text {
-       background: linear-gradient(to bottom, #ffffff 0%, #a0a0a0 50%, #ffffff 100%);
-       -webkit-background-clip: text;
-       -webkit-text-fill-color: transparent;
-       filter: drop-shadow(0px 0px 5px rgba(255,255,255,0.3));
-    }
-
     @keyframes fade-in {
-       from { opacity: 0; transform: translateY(10px); }
-       to { opacity: 1; transform: translateY(0); }
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
     .animate-fade-in {
-       animation: fade-in 0.6s ease-out forwards;
+      animation: fade-in 0.6s ease-out forwards;
     }
-
     @keyframes slide-in-right {
-       from { opacity: 0; transform: translateX(-20px); }
-       to { opacity: 1; transform: translateX(0); }
+      from { opacity: 0; transform: translateX(-20px); }
+      to { opacity: 1; transform: translateX(0); }
     }
     .animate-slide-in-right {
-       animation: slide-in-right 0.8s ease-out forwards;
+      animation: slide-in-right 0.8s ease-out forwards;
     }
-    
-    /* Custom Scrollbar for Modal */
-    .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-    .custom-scrollbar::-webkit-scrollbar-track { background: #0f0f11; }
-    .custom-scrollbar::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
-    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #E30613; }
+    .liquid-chrome-text {
+      background: linear-gradient(to right, #fff, #aaa, #fff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      background-size: 200% auto;
+      animation: shine 4s linear infinite;
+    }
+    @keyframes shine {
+      to { background-position: 200% center; }
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .custom-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    .brand-font { font-family: 'Michroma', sans-serif; }
+    .sub-brand-font { font-family: 'Montserrat', sans-serif; }
   `]
 })
 export class HomeComponent {
-  public dataService = inject(DataService);
   private router = inject(Router);
+  public dataService = inject(DataService);
   private fb = inject(FormBuilder);
 
   currentPage = signal<Page>('home');
   mobileMenuOpen = signal(false);
   
-  // Search
+  // Search state
   tyreSearchQuery = '';
   foundTyres = signal<TyreProduct[]>([]);
 
-  // Car Modal
+  // Car Modal state
   selectedCar = signal<Car | null>(null);
-  
-  // Booking Modal
+
+  // Booking Modal state
   isBookingModalOpen = signal(false);
   bookingSubmitted = signal(false);
 
-  partnerBrands = ['MICHELIN', 'PIRELLI', 'CONTINENTAL', 'BRIDGESTONE', 'GOODYEAR', 'DUNLOP'];
+  // Static
+  partnerBrands = ['Michelin', 'Pirelli', 'Continental', 'Bridgestone', 'Goodyear', 'Dunlop'];
 
-  bookingForm: FormGroup = this.fb.group({
+  bookingForm = this.fb.group({
     customerName: ['', Validators.required],
     contact: ['', Validators.required],
     serviceType: ['', Validators.required],
@@ -801,19 +683,19 @@ export class HomeComponent {
   });
 
   resolvePage(item: string): Page {
-    const map: Record<string, Page> = {
-        'Home': 'home',
-        'Service': 'services',
-        'Tyres': 'tyres',
-        'Buy a Car': 'cars',
-        'Contact': 'contact',
-        'About': 'about'
-    };
-    return map[item] || 'home';
+    switch (item) {
+      case 'Home': return 'home';
+      case 'Service': return 'services';
+      case 'Tyres': return 'tyres';
+      case 'Buy a Car': return 'cars';
+      case 'Contact': return 'contact';
+      case 'About': return 'about';
+      default: return 'home';
+    }
   }
 
-  navigateTo(page: Page) {
-    this.currentPage.set(page);
+  navigateTo(page: string) {
+    this.currentPage.set(page as Page);
     this.mobileMenuOpen.set(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
@@ -823,50 +705,62 @@ export class HomeComponent {
   }
 
   searchTyres() {
-    if (this.tyreSearchQuery.trim().length < 2) return;
-    const res = this.dataService.searchTyres(this.tyreSearchQuery);
-    this.foundTyres.set(res);
+    this.foundTyres.set(this.dataService.searchTyres(this.tyreSearchQuery));
   }
 
   viewCarDetails(car: Car) {
     this.selectedCar.set(car);
+    document.body.style.overflow = 'hidden';
   }
 
   closeCarDetails() {
     this.selectedCar.set(null);
+    document.body.style.overflow = 'auto';
   }
 
   enquireCar(car: Car) {
-    this.selectedCar.set(null);
-    this.openBookingModal(`Car Interest: ${car.model} (${car.year})`);
+    this.closeCarDetails();
+    this.openBookingModal(`Car Enquiry: ${car.model}`);
   }
 
   openBookingModal(serviceName?: string) {
+    this.isBookingModalOpen.set(true);
+    this.bookingSubmitted.set(false);
     if (serviceName) {
       this.bookingForm.patchValue({ serviceType: serviceName });
     }
-    this.isBookingModalOpen.set(true);
-    this.bookingSubmitted.set(false);
+    document.body.style.overflow = 'hidden';
   }
 
   closeBookingModal() {
     this.isBookingModalOpen.set(false);
     this.bookingForm.reset();
+    document.body.style.overflow = 'auto';
   }
 
   submitBooking() {
     if (this.bookingForm.valid) {
-      this.dataService.addBooking(this.bookingForm.value).subscribe(() => {
+      const formVal = this.bookingForm.value;
+      this.dataService.addBooking({
+        customerName: formVal.customerName!,
+        contact: formVal.contact!,
+        serviceType: formVal.serviceType!,
+        date: formVal.date!,
+        notes: formVal.notes || undefined
+      }).subscribe(() => {
         this.bookingSubmitted.set(true);
+        setTimeout(() => {
+           this.closeBookingModal();
+        }, 3000);
       });
     }
+  }
+  
+  getWhatsAppLink(number: string): string {
+    return `https://wa.me/${number.replace(/[^0-9]/g, '')}`;
   }
 
   navigateToAdmin() {
     this.router.navigate(['/admin']);
-  }
-
-  getWhatsAppLink(number: string) {
-    return `https://wa.me/${number.replace(/[^0-9]/g, '')}`;
   }
 }
