@@ -6,7 +6,7 @@ import { CommonModule, NgOptimizedImage } from '@angular/common';
   selector: 'app-home-landing',
   imports: [CommonModule, NgOptimizedImage],
   templateUrl: './home-landing.component.html',
-  styleUrl: './home-landing.component.scss'
+  styleUrl: './home-landing.component.css'
 })
 export class HomeLandingComponent {
   navigate = output<string>();

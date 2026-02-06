@@ -25,7 +25,7 @@ type Page = 'home' | 'services' | 'tyres' | 'cars' | 'contact' | 'about';
     HomeContactComponent
   ],
   templateUrl: './home.component.html',
-  styleUrl: './home.component.scss'
+  styleUrl: './home.component.css'
 })
 export class HomeComponent {
   private router = inject(Router);
