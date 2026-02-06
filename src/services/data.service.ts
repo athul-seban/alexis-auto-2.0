@@ -121,6 +121,7 @@ export class DataService {
 
   private apiUrl = this.getBaseUrl();
   isDemoMode = signal(false);
+  theme = signal<'dark' | 'light'>('dark');
 
   // --- State Signals ---
   inventory = signal<Car[]>([]);
@@ -144,6 +145,12 @@ export class DataService {
   banner = signal<Banner>({ active: false, reason: '' });
 
   constructor() {
+    // Theme Init
+    const storedTheme = localStorage.getItem('alexis_theme') as 'dark' | 'light';
+    if (storedTheme) {
+      this.setTheme(storedTheme);
+    }
+    
     // Check if we should force start in Demo Mode (e.g. from Admin setting)
     const storedDemo = localStorage.getItem('alexis_demo_mode');
     if (storedDemo === 'true') {
@@ -151,6 +158,20 @@ export class DataService {
     } else {
       this.initializeData();
     }
+  }
+
+  setTheme(theme: 'dark' | 'light') {
+    this.theme.set(theme);
+    localStorage.setItem('alexis_theme', theme);
+    if (theme === 'light') {
+      document.body.classList.add('light-mode');
+    } else {
+      document.body.classList.remove('light-mode');
+    }
+  }
+
+  toggleTheme() {
+    this.setTheme(this.theme() === 'dark' ? 'light' : 'dark');
   }
 
   setCustomApiUrl(url: string) {

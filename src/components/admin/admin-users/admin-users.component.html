@@ -5,6 +5,22 @@
 <div class="bg-white/5 p-6 rounded-xl mb-8 border border-white/10">
    <h3 class="text-sm font-bold text-gray-400 uppercase mb-6">System Configuration</h3>
    
+   <!-- Theme Toggle -->
+   <div class="flex items-center justify-between mb-6 pb-6 border-b border-white/10">
+      <div>
+        <p class="text-white font-bold text-sm">Interface Theme</p>
+        <p class="text-xs text-gray-500">Switch between the brand Dark mode and Light mode.</p>
+      </div>
+      <div class="flex items-center gap-3">
+         <span class="text-xs font-bold uppercase" [class.text-[#E30613]]="dataService.theme() === 'dark'" [class.text-gray-600]="dataService.theme() !== 'dark'">Dark</span>
+         <button (click)="toggleTheme()" class="relative w-12 h-6 rounded-full transition-colors duration-300 focus:outline-none bg-gray-700">
+             <div class="absolute top-1 left-1 w-4 h-4 rounded-full bg-white transition-transform duration-300"
+               [class.translate-x-6]="dataService.theme() === 'light'"></div>
+         </button>
+         <span class="text-xs font-bold uppercase" [class.text-[#E30613]]="dataService.theme() === 'light'" [class.text-gray-600]="dataService.theme() !== 'light'">Light</span>
+      </div>
+   </div>
+
    <!-- Demo Mode Toggle -->
    <div class="flex items-center justify-between mb-6">
       <div>

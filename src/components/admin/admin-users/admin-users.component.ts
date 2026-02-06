@@ -43,6 +43,10 @@ export class AdminUsersComponent {
     }
   }
 
+  toggleTheme() {
+    this.dataService.toggleTheme();
+  }
+
   toggleDemoMode() {
     const currentState = this.dataService.isDemoMode();
     this.dataService.toggleDemoMode(!currentState);
