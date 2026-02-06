@@ -1,0 +1,57 @@
+
+<h2 class="text-xl font-bold mb-6 border-b border-white/10 pb-4">System & User Management</h2>
+           
+<!-- API Configuration -->
+<div class="bg-white/5 p-6 rounded-xl mb-8 border border-white/10">
+   <h3 class="text-sm font-bold text-[#E30613] uppercase mb-4">Remote Access Configuration</h3>
+   
+   <!-- Setup Guide -->
+   <details class="bg-black/40 border border-white/10 rounded p-4 mb-4 text-xs text-gray-400" open>
+     <summary class="cursor-pointer font-bold text-white mb-2 select-none hover:text-[#E30613] transition-colors">Setup Guide: How to access from outside?</summary>
+     <ol class="list-decimal pl-4 space-y-3 mt-2">
+       <li>Download <strong>ngrok</strong> from <a href="https://ngrok.com/download" target="_blank" class="text-[#E30613] hover:underline">ngrok.com/download</a>.</li>
+       <li>
+          <strong>IMPORTANT:</strong> You must restart your Angular server to allow remote connections:
+          <div class="bg-black p-2 rounded border border-white/20 mt-1 font-mono text-[10px] text-green-400">ng serve --host 0.0.0.0 --disable-host-check</div>
+       </li>
+       <li>
+          Tunnel your Backend (API) on port 8000:
+          <div class="bg-black p-2 rounded border border-white/20 mt-1 font-mono text-[10px] text-green-400">ngrok http 8000</div>
+          <span class="text-[10px] italic opacity-70">Copy the https URL it gives you (e.g., https://api-xyz.ngrok.app) and paste it below.</span>
+       </li>
+       <li>
+          Tunnel your Frontend (App) on port 4200:
+          <div class="bg-black p-2 rounded border border-white/20 mt-1 font-mono text-[10px] text-green-400">ngrok http 4200</div>
+          <span class="text-[10px] italic opacity-70">Use this URL on your phone to visit the site.</span>
+       </li>
+     </ol>
+   </details>
+
+   <p class="text-xs text-gray-400 mb-4">Enter your backend URL below (from Step 3). Example: <code>https://api-xyz.ngrok-free.app/api</code></p>
+   
+   <div class="flex flex-col gap-2">
+      <label class="text-[10px] uppercase font-bold text-gray-500">Current API URL</label>
+      <div class="flex gap-2">
+         <input #apiUrlInput type="text" [value]="dataService.getCurrentApiUrl()" class="flex-1 bg-black border border-white/20 rounded p-2 text-sm text-white font-mono">
+         <button (click)="dataService.setCustomApiUrl(apiUrlInput.value)" class="bg-white/10 hover:bg-white hover:text-black text-white px-4 py-2 rounded text-xs font-bold uppercase transition-colors">Save</button>
+         <button (click)="dataService.resetApiUrl()" class="bg-white/10 hover:bg-red-600 text-white px-4 py-2 rounded text-xs font-bold uppercase transition-colors">Reset</button>
+      </div>
+   </div>
+</div>
+
+<div class="bg-white/5 p-6 rounded-xl mb-8">
+   <h3 class="text-sm font-bold text-gray-400 uppercase mb-4">Change Password</h3>
+   <div class="flex gap-4">
+      <input #passInput type="password" placeholder="New Password" class="bg-black border border-white/20 rounded p-2 text-sm text-white flex-1">
+      <button (click)="changePassword(passInput)" class="bg-[#E30613] text-white px-6 py-2 rounded text-xs font-bold uppercase">Update</button>
+   </div>
+   @if (passwordMsg()) { <p class="text-green-500 text-xs mt-2">{{ passwordMsg() }}</p> }
+</div>
+<div class="bg-white/5 p-6 rounded-xl mb-8">
+   <h3 class="text-sm font-bold text-gray-400 uppercase mb-4">Add New Admin User</h3>
+   <form [formGroup]="userForm" (ngSubmit)="addUser()" class="space-y-4">
+      <div><input formControlName="username" placeholder="Username" class="w-full bg-black border border-white/20 rounded p-2 text-sm text-white"></div>
+      <div><input formControlName="password" type="password" placeholder="Password" class="w-full bg-black border border-white/20 rounded p-2 text-sm text-white"></div>
+      <button type="submit" [disabled]="userForm.invalid" class="bg-white text-black hover:bg-gray-200 px-6 py-2 rounded text-xs font-bold uppercase disabled:opacity-50">Create User</button>
+   </form>
+</div>
