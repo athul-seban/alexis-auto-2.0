@@ -208,7 +208,7 @@ export class DataService {
       if (e.status === 0 || e.status === 404 || e.status === 500) {
         this.banner.set({ 
             active: true, 
-            reason: 'CONNECTION ERROR: Backend not reachable. Check Port 8000 visibility or use Demo Mode.',
+            reason: 'CONNECTION ERROR: Backend not reachable. Using cached or limited data.',
             action: 'demo'
         });
       }
@@ -229,11 +229,12 @@ export class DataService {
     this.isDemoMode.set(true);
     // Use stored banner message if available, otherwise default
     const currentReason = this.banner().reason;
-    const defaultMsg = 'DEMO MODE: Using static data. Backend features are disabled.';
+    const defaultMsg = 'Demo Mode Active';
     
+    // Use existing reason if it exists and looks valid (not empty), otherwise use default
     this.banner.set({ 
       active: true, 
-      reason: currentReason && currentReason.includes('DEMO MODE') ? currentReason : defaultMsg 
+      reason: currentReason && currentReason.length > 0 ? currentReason : defaultMsg 
     });
     
     // Populate with dummy data
