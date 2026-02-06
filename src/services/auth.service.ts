@@ -26,7 +26,7 @@ export class AuthService {
 
   login(username: string, password: string): Observable<any> {
     return this.dataService.login(username, password).pipe(
-      tap(res => {
+      tap((res: any) => {
          if (res.access_token) {
            this.isLoggedIn.set(true);
            this.currentUser.set(res.username);
