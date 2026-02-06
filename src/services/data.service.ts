@@ -150,7 +150,14 @@ export class DataService {
     if (storedTheme) {
       this.setTheme(storedTheme);
     }
-    this.initializeData();
+    
+    // Check if we should force start in Demo Mode (e.g. from Admin setting)
+    const storedDemo = localStorage.getItem('alexis_demo_mode');
+    if (storedDemo === 'true') {
+      this.enableDemoMode();
+    } else {
+      this.initializeData();
+    }
   }
 
   setTheme(theme: 'dark' | 'light') {
@@ -208,9 +215,26 @@ export class DataService {
     }
   }
 
+  toggleDemoMode(enable: boolean) {
+    if (enable) {
+      localStorage.setItem('alexis_demo_mode', 'true');
+      this.enableDemoMode();
+    } else {
+      localStorage.removeItem('alexis_demo_mode');
+      window.location.reload(); // Reload to attempt real backend connection
+    }
+  }
+
   enableDemoMode() {
     this.isDemoMode.set(true);
-    this.banner.set({ active: true, reason: 'DEMO MODE: Using static data. Backend features are disabled.' });
+    // Use stored banner message if available, otherwise default
+    const currentReason = this.banner().reason;
+    const defaultMsg = 'DEMO MODE: Using static data. Backend features are disabled.';
+    
+    this.banner.set({ 
+      active: true, 
+      reason: currentReason && currentReason.includes('DEMO MODE') ? currentReason : defaultMsg 
+    });
     
     // Populate with dummy data
     this.inventory.set([
@@ -427,7 +451,11 @@ export class DataService {
   }
 
   updateBanner(active: boolean, reason: string) {
-    if (this.isDemoMode()) return;
+    // If in Demo Mode, handle locally to allow customization
+    if (this.isDemoMode()) {
+      this.banner.set({ active, reason });
+      return;
+    }
     const payload = { active, reason };
     this.http.post(`${this.apiUrl}/settings`, { key: 'banner', value: payload }, this.getOptions(true)).subscribe(() => {
       this.banner.set(payload);

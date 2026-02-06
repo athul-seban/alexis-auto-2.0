@@ -42,4 +42,17 @@ export class AdminUsersComponent {
       });
     }
   }
+
+  toggleDemoMode() {
+    const currentState = this.dataService.isDemoMode();
+    this.dataService.toggleDemoMode(!currentState);
+  }
+
+  updateBanner(message: string) {
+    if (!message) {
+      this.dataService.updateBanner(false, '');
+    } else {
+      this.dataService.updateBanner(true, message);
+    }
+  }
 }
